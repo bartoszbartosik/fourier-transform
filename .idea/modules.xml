@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/FourierTransform.iml" filepath="$PROJECT_DIR$/.idea/FourierTransform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../VoiceRecognition/.idea/VoiceRecognition.iml" filepath="$PROJECT_DIR$/../VoiceRecognition/.idea/VoiceRecognition.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../WordFormation/.idea/WordFormation.iml" filepath="$PROJECT_DIR$/../WordFormation/.idea/WordFormation.iml" />
     </modules>
   </component>
 </project>
