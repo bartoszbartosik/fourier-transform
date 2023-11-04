@@ -2,8 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy import sin, cos, pi
 
-# Integrate an y(x) function
+
 def integrate(x: np.ndarray, y, return_array=False):
+    """
+    Integrate a y(x) function.
+    """
     dx =  x[1] - x[0]
 
     da = 0
@@ -19,8 +22,10 @@ def integrate(x: np.ndarray, y, return_array=False):
             da += dx * y_i
         return da
 
-# Perform a Discrete Fourier Transform on a y(x) function
 def dtft(x: np.ndarray, y: np.ndarray) -> dict:
+    """
+    Perform a Discrete Fourier Transform on a y(x) function.
+    """
     # Number of samples
     n = len(x)
 
