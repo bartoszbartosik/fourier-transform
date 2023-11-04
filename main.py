@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Integrate a y(x) function
+# Integrate an y(x) function
 def integrate(x: np.ndarray, y, return_array=False):
     dx =  x[1] - x[0]
 
@@ -18,27 +18,35 @@ def integrate(x: np.ndarray, y, return_array=False):
             da += dx * y_i
         return da
 
-# Perform the Fourier Transform on a y(x) function
+# Perform a Discrete Fourier Transform on a y(x) function
 # TODO: add phase shift
-def dft(x: np.ndarray, y: np.ndarray):
+def dtft(x: np.ndarray, y: np.ndarray):
     # Number of samples
     n = len(x)
 
-    # Frequency increment
+    # Frequency increment (sampling frequency reciprocal)
     df = (x[-1]-x[0])/n
 
+    # Symmetry axis
+    f_sym = 1/(2*df)*x[-1]
+
     # Frequency domain
-    f = np.linspace(0, 1/(2*df), n)
+    f = np.linspace(0, f_sym, n)
 
     # Compute Fourier Transform
-    ft = []
+    results = {
+        'f': f,
+        're': [],
+        'im': []
+    }
     for f_i in f:
-        alpha = integrate(x, y*np.cos(f_i*x))
-        beta = integrate(x, y*np.sin(f_i*x))
+        re = integrate(x, y*np.cos(f_i*x))
+        im = integrate(x, y*np.sin(f_i*x))
 
-        ft.append(np.sqrt(alpha**2 + beta**2))
+        results['re'].append(re)
+        results['im'].append(im)
 
-    return f, ft
+    return results
 
 # Define a function for which Fourier Transform will be performed
 def function(x):
@@ -48,8 +56,8 @@ def function(x):
 def main():
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # #   S E T   U P   # # # # # # # # # # # # # # # # # # # # # # # # #
-    # Number of samples per unit
-    f_s = 1000
+    # Sampling frequency
+    f_s = 100
 
     # x's increment
     dx = 1/f_s
@@ -61,7 +69,7 @@ def main():
     y = np.array([function(x) for x in x])
 
     # Fourier transform
-    f, ft = dft(x, y)
+    dtft_dict = dtft(x, y)
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # # #   P L O T   # # # # # # # # # # # # # # # # # # # # # # # # # #
