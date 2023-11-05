@@ -55,17 +55,20 @@ def dtft(x: np.ndarray, y: np.ndarray) -> dict:
 
 # Define a function to be analysed
 def function(x):
-    return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
+    # return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
+    # return 2*sin(2*x - pi/4) + 2*cos(5*x) + 3*cos(20*x) + 4*sin(110*x) + 0.2*cos(50*x)
+    # return 2*sin(50*x - pi/4)
+    return sin(100*x - pi/4)
 
 # Main function
 def main():
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # #   S E T   U P   # # # # # # # # # # # # # # # # # # # # # # # # #
     # Sampling frequency (number of samples per unit)
-    f_s = 200
+    f_s = 300
 
     # Function interval
-    x_end = 2
+    x_end = pi/4
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -88,53 +91,41 @@ def main():
     f, re, im = dtft_dict.values()
 
     # Compute each frequency magnitude
-    mags = np.sqrt(re**2 + im**2)
+    amp = np.sqrt(re**2 + im**2)
 
     # Compute each frequency phase shift
-    phi = np.arctan(im/re)
+    phi = np.arctan2(re, im)*180/pi
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # # #   P L O T   # # # # # # # # # # # # # # # # # # # # # # # # # #
-    # Analysed function
-    plt.subplot(311)
-    plt.scatter(x, y, s=0.2)
-    plt.title('Analysed function')
-    plt.xlabel('x')
-    plt.ylabel('f(x)')
-    plt.grid()
+    plot_data = {
+        'xs': [x, f, f, f, f],
+        'ys': [y, amp, phi, re, im],
+        'plot_types': [plt.scatter, plt.stem, plt.stem, plt.stem, plt.stem],
+        'subplots': [311, 323, 324, 325, 326],
+        'titles': ['Analysed function', 'Amplitude', 'Phase shift', 'Real part', 'Imaginary part'],
+        'x_labels': ['x', 'f', 'f', 'f', 'f'],
+        'y_labels': ['y(x)', 'A(f)', 'phi(f)', 'Re(f)', 'Im(f)']
+    }
 
-    # Magnitude
-    plt.subplot(323)
-    plt.plot(f, mags)
-    plt.title('Magnitude')
-    plt.xlabel('f')
-    plt.ylabel('M(f)')
-    plt.grid()
-
-    # Phase shift
-    plt.subplot(324)
-    plt.plot(f, phi)
-    plt.title('Phase shift')
-    plt.xlabel('f')
-    plt.ylabel('phi(f)')
-    plt.grid()
-
-    # Real part
-    plt.subplot(325)
-    plt.plot(f, re)
-    plt.title('Real part')
-    plt.xlabel('f')
-    plt.ylabel('re(f)')
-    plt.grid()
-
-    # Imaginary part
-    plt.subplot(326)
-    plt.plot(f, im)
-    plt.title('Imaginary part')
-    plt.xlabel('f')
-    plt.ylabel('im(f)')
-    plt.grid()
+    for i in range(len(plot_data['xs'])):
+        plt.subplot(plot_data['subplots'][i])
+        if i == 0:
+            plot_data['plot_types'][i](plot_data['xs'][i], plot_data['ys'][i], s=0.2, c='0.3')
+        else:
+            markerline, stemline, baseline = plot_data['plot_types'][i](plot_data['xs'][i], plot_data['ys'][i], linefmt='0.3', markerfmt='o')
+            markerline.set_markerfacecolor('0.3')
+            markerline.set_markeredgecolor('0.3')
+            baseline.set_color('none')
+            stem_linewidth = 1
+            stem_markersize = 2
+            plt.setp(stemline, linewidth=stem_linewidth)
+            plt.setp(markerline, markersize=stem_markersize)
+        plt.title(plot_data['titles'][i])
+        plt.xlabel(plot_data['x_labels'][i])
+        plt.ylabel(plot_data['y_labels'][i])
+        plt.grid()
 
     plt.show()
 
