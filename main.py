@@ -53,6 +53,22 @@ def dtft(x: np.ndarray, y: np.ndarray) -> dict:
 
     return results
 
+
+def idft(dtft: dict, x):
+    f, re, im = dtft.values()
+
+    # Compute each frequency magnitude
+    amp = np.sqrt(re ** 2 + im ** 2)
+
+    # Compute each frequency phase shift
+    phi = np.arctan2(re, im)
+
+    s = amp*sin(np.outer(f, x) - phi)
+
+    np.sum(s, axis=0)
+
+    return s
+
 # Define a function to be analysed
 def function(x):
     # return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
@@ -96,6 +112,10 @@ def main():
     # Compute each frequency phase shift
     phi = np.arctan2(re, im)*180/pi
 
+
+
+    plt.plot(x, idft(dtft_dict, x))
+    plt.show()
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # # #   P L O T   # # # # # # # # # # # # # # # # # # # # # # # # # #
