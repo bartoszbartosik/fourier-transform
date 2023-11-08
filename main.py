@@ -56,7 +56,7 @@ def ift(dft: dict):
         re_i = 0
         im_i = 0
         for k in range(N):
-            re_i += re[k]*cos(2*pi/N*k*n) - im[k]*sin(2*pi/N*k*n)
+            re_i += re[k]*cos(2*pi/N*k*n) + im[k]*sin(2*pi/N*k*n)
             im_i += re[k]*sin(2*pi/N*k*n) - im[k]*cos(2*pi/N*k*n)
         results['re'] = np.append(results['re'], re_i/N)
         results['im'] = np.append(results['im'], re_i/N)
@@ -66,10 +66,10 @@ def ift(dft: dict):
 
 # Define a function to be analysed
 def function(x):
-    return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
+    # return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
     # return 2*sin(2*x - pi/4) + 2*cos(5*x) + 3*cos(20*x) + 4*sin(110*x) + 0.2*cos(50*x)
     # return 2*sin(50*x - pi/4)
-    # return sin(100*x + pi/4)
+    return sin(100*x + pi/4)
 
 
 # Main function
