@@ -10,11 +10,8 @@ def dft(x: np.ndarray, y: np.ndarray):
     # Number of samples
     N = len(x)
 
-    # Frequency increment (sampling frequency reciprocal)
+    # Frequency resolution (sampling frequency reciprocal)
     df = 1 / x[-1] * 2*pi
-
-    # Symmetry axis
-    f_sym = 1 / (2 * df) * x[-1]
 
     # Frequency domain
     f = np.linspace(0, N * df, N)
@@ -35,10 +32,19 @@ def dft(x: np.ndarray, y: np.ndarray):
 
     return results
 
-def ift(dft: dict, x):
+
+def ift(dft: dict):
+    # Extract frequency, real, and imaginary part
     f, re, im = dft.values()
 
+    # Number of samples
     N = len(f)
+
+    # Original function's domain resolution
+    dx = 1 / f[-1]
+
+    # Original function domain
+    x = np.linspace(0, N * dx, N)
 
     results = {
         'x': x,
@@ -60,10 +66,10 @@ def ift(dft: dict, x):
 
 # Define a function to be analysed
 def function(x):
-    # return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
+    return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
     # return 2*sin(2*x - pi/4) + 2*cos(5*x) + 3*cos(20*x) + 4*sin(110*x) + 0.2*cos(50*x)
     # return 2*sin(50*x - pi/4)
-    return sin(100*x + pi/4)
+    # return sin(100*x + pi/4)
 
 
 # Main function
@@ -71,7 +77,7 @@ def main():
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # #   S E T   U P   # # # # # # # # # # # # # # # # # # # # # # # # #
     # Sampling frequency (number of samples per unit)
-    f_s = 300
+    f_s = 500
 
     # Function interval
     x_end = pi/4
@@ -91,7 +97,7 @@ def main():
     dtft_dict = dft(x, y)
 
     # Compute inverse Fourier transform
-    ift_dict = ift(dtft_dict, x)
+    ift_dict = ift(dtft_dict)
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -100,7 +106,7 @@ def main():
     f, re, im = dtft_dict.values()
 
     # Compute each frequency magnitude
-    amp = np.sqrt(re**2 + im**2)
+    amp = 1/len(f)*np.sqrt(re**2 + im**2)
 
     # Compute each frequency phase shift
     phi = np.arctan2(re, im)*180/pi
@@ -113,12 +119,12 @@ def main():
     # # # # # # # # # # # # # # # # # # # # # # # # # #   P L O T   # # # # # # # # # # # # # # # # # # # # # # # # # #
     plot_data = {
         'xs': [x, f, f, f, f, x],
-        'ys': [y, amp, phi, re, im, im_i],
+        'ys': [y, amp, phi, re, im, re_i],
         'plot_types': [plt.scatter, plt.stem, plt.stem, plt.stem, plt.stem, plt.scatter],
         'subplots': [411, 423, 424, 425, 426, 414],
         'titles': ['Analysed function', 'Amplitude', 'Phase shift', 'Real part', 'Imaginary part', 'Reconstructed signal'],
         'x_labels': ['x', 'f', 'f', 'f', 'f', 'x'],
-        'y_labels': ['y(x)', 'A(f)', 'phi(f)', 'Re(f)', 'Im(f)', 'y\'(x)']
+        'y_labels': ['y(x)', 'A(f)', '\u03C6(f)', 'Re(f)', 'Im(f)', 'y\'(x)']
     }
 
     for i in range(len(plot_data['xs'])):
