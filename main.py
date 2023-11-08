@@ -3,78 +3,68 @@ import numpy as np
 from numpy import sin, cos, pi
 
 
-def integrate(x: np.ndarray, y, return_array=False):
-    """
-    Integrate a y(x) function.
-    """
-    dx =  x[1] - x[0]
-
-    da = 0
-    if return_array:
-        y_int = []
-        for y_i in y:
-            da += dx * y_i
-            y_int.append(da)
-
-        return np.array(y_int)
-    else:
-        for y_i in y:
-            da += dx * y_i
-        return da
-
-def dtft(x: np.ndarray, y: np.ndarray) -> dict:
+def dft(x: np.ndarray, y: np.ndarray):
     """
     Perform a Discrete Fourier Transform on a y(x) function.
     """
     # Number of samples
-    n = len(x)
+    N = len(x)
 
     # Frequency increment (sampling frequency reciprocal)
-    df = (x[1]-x[0])
+    df = 1 / x[-1] * 2*pi
 
     # Symmetry axis
-    f_sym = 1/(2*df)*x[-1]
+    f_sym = 1 / (2 * df) * x[-1]
 
     # Frequency domain
-    f = np.linspace(0, f_sym, n)
+    f = np.linspace(0, N * df, N)
 
-    # Compute Fourier Transform
     results = {
         'f': f,
         're': np.array([]),
         'im': np.array([])
     }
-    for f_i in f:
-        re = integrate(x, y*cos(f_i*x))
-        im = integrate(x, y*sin(f_i*x))
-
+    for k in range(N):
+        re = 0
+        im = 0
+        for n in range(N):
+            re += y[n]*cos(2*pi/N*k*n)
+            im += y[n]*sin(2*pi/N*k*n)
         results['re'] = np.append(results['re'], re)
         results['im'] = np.append(results['im'], im)
 
     return results
 
+def ift(dft: dict, x):
+    f, re, im = dft.values()
 
-def idft(dtft: dict, x):
-    f, re, im = dtft.values()
+    N = len(f)
 
-    # Compute each frequency magnitude
-    amp = np.sqrt(re ** 2 + im ** 2)
+    results = {
+        'x': x,
+        're': np.array([]),
+        'im': np.array([])
+    }
 
-    # Compute each frequency phase shift
-    phi = np.arctan2(re, im)
+    for n in range(N):
+        re_i = 0
+        im_i = 0
+        for k in range(N):
+            re_i += re[k]*cos(2*pi/N*k*n) - im[k]*sin(2*pi/N*k*n)
+            im_i += re[k]*sin(2*pi/N*k*n) - im[k]*cos(2*pi/N*k*n)
+        results['re'] = np.append(results['re'], re_i/N)
+        results['im'] = np.append(results['im'], re_i/N)
 
-    s = amp*sin(np.outer(f, x) - phi)
+    return results
 
-    np.sum(s, axis=0)
-
-    return s
 
 # Define a function to be analysed
 def function(x):
     # return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
     # return 2*sin(2*x - pi/4) + 2*cos(5*x) + 3*cos(20*x) + 4*sin(110*x) + 0.2*cos(50*x)
     # return 2*sin(50*x - pi/4)
-    return sin(100*x - pi/4)
+    return sin(100*x + pi/4)
+
 
 # Main function
 def main():
@@ -98,7 +88,10 @@ def main():
     y = np.array([function(x) for x in x])
 
     # Compute Fourier transform
-    dtft_dict = dtft(x, y)
+    dtft_dict = dft(x, y)
+
+    # Compute inverse Fourier transform
+    ift_dict = ift(dtft_dict, x)
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -112,26 +105,25 @@ def main():
     # Compute each frequency phase shift
     phi = np.arctan2(re, im)*180/pi
 
-
-
-    plt.plot(x, idft(dtft_dict, x))
-    plt.show()
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    # Extract real and imaginary part of original signal
+    _, re_i, im_i = ift_dict.values()
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # # #   P L O T   # # # # # # # # # # # # # # # # # # # # # # # # # #
     plot_data = {
-        'xs': [x, f, f, f, f],
-        'ys': [y, amp, phi, re, im],
-        'plot_types': [plt.scatter, plt.stem, plt.stem, plt.stem, plt.stem],
-        'subplots': [311, 323, 324, 325, 326],
-        'titles': ['Analysed function', 'Amplitude', 'Phase shift', 'Real part', 'Imaginary part'],
-        'x_labels': ['x', 'f', 'f', 'f', 'f'],
-        'y_labels': ['y(x)', 'A(f)', 'phi(f)', 'Re(f)', 'Im(f)']
+        'xs': [x, f, f, f, f, x],
+        'ys': [y, amp, phi, re, im, im_i],
+        'plot_types': [plt.scatter, plt.stem, plt.stem, plt.stem, plt.stem, plt.scatter],
+        'subplots': [411, 423, 424, 425, 426, 414],
+        'titles': ['Analysed function', 'Amplitude', 'Phase shift', 'Real part', 'Imaginary part', 'Reconstructed signal'],
+        'x_labels': ['x', 'f', 'f', 'f', 'f', 'x'],
+        'y_labels': ['y(x)', 'A(f)', 'phi(f)', 'Re(f)', 'Im(f)', 'y\'(x)']
     }
 
     for i in range(len(plot_data['xs'])):
         plt.subplot(plot_data['subplots'][i])
-        if i == 0:
+        if i == 0 or i == len(plot_data['xs'])-1:
             plot_data['plot_types'][i](plot_data['xs'][i], plot_data['ys'][i], s=0.2, c='0.3')
         else:
             markerline, stemline, baseline = plot_data['plot_types'][i](plot_data['xs'][i], plot_data['ys'][i], linefmt='0.3', markerfmt='o')
