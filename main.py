@@ -16,11 +16,13 @@ def dft(x: np.ndarray, y: np.ndarray):
     # Frequency domain
     f = np.linspace(0, N * df, N)
 
+    # Dictionary for storing computations results
     results = {
         'f': f,
         're': np.array([]),
         'im': np.array([])
     }
+
     for k in range(N):
         re = 0
         im = 0
@@ -34,6 +36,9 @@ def dft(x: np.ndarray, y: np.ndarray):
 
 
 def ift(dft: dict):
+    """
+    Perform an Inverse Discrete Fourier Transform.
+    """
     # Extract frequency, real, and imaginary part
     f, re, im = dft.values()
 
@@ -41,11 +46,12 @@ def ift(dft: dict):
     N = len(f)
 
     # Original function's domain resolution
-    dx = 1 / f[-1]
+    dx = 2*pi / f[-1]
 
     # Original function domain
     x = np.linspace(0, N * dx, N)
 
+    # Dictionary for storing computations results
     results = {
         'x': x,
         're': np.array([]),
@@ -68,8 +74,8 @@ def ift(dft: dict):
 def function(x):
     # return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
     # return 2*sin(2*x - pi/4) + 2*cos(5*x) + 3*cos(20*x) + 4*sin(110*x) + 0.2*cos(50*x)
-    # return 2*sin(50*x - pi/4)
-    return sin(100*x + pi/4)
+    return 2*sin(50*x - pi/4)
+    # return sin(100*x + pi/4)
 
 
 # Main function
@@ -113,12 +119,12 @@ def main():
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # Extract real and imaginary part of original signal
-    _, re_i, im_i = ift_dict.values()
+    x_i, re_i, im_i = ift_dict.values()
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # # #   P L O T   # # # # # # # # # # # # # # # # # # # # # # # # # #
     plot_data = {
-        'xs': [x, f, f, f, f, x],
+        'xs': [x, f, f, f, f, x_i],
         'ys': [y, amp, phi, re, im, re_i],
         'plot_types': [plt.scatter, plt.stem, plt.stem, plt.stem, plt.stem, plt.scatter],
         'subplots': [411, 423, 424, 425, 426, 414],
@@ -129,7 +135,7 @@ def main():
 
     for i in range(len(plot_data['xs'])):
         plt.subplot(plot_data['subplots'][i])
-        if i == 0 or i == len(plot_data['xs'])-1:
+        if plot_data['plot_types'][i].__name__ == 'scatter':
             plot_data['plot_types'][i](plot_data['xs'][i], plot_data['ys'][i], s=0.2, c='0.3')
         else:
             markerline, stemline, baseline = plot_data['plot_types'][i](plot_data['xs'][i], plot_data['ys'][i], linefmt='0.3', markerfmt='o')
