@@ -64,5 +64,6 @@ using the multiplication rule for complex numbers $(x+yi)(u+vi)=(xu-yv)+(xv+yu)i
 x_{n} = \frac{1}{N}\sum_{k=0}^{N-1} (Re(X_k)\cos{\frac{2\pi}{N}kn} + Im(X_k)\sin{\frac{2\pi}{N}kn}) + (Re(X_k)\sin{\frac{2\pi}{N}kn} - Im(X_k)\cos{\frac{2\pi}{N}kn})i
 ```
 
-# Plot
+# Visualization
+
 
