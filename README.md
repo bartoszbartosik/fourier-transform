@@ -65,6 +65,6 @@ x_{n} = \frac{1}{N}\sum_{k=0}^{N-1} (Re(X_k)\cos{\frac{2\pi}{N}kn} + Im(X_k)\sin
 ```
 
 # Visualization
-Graph below shows analysis done for $y(x) = 2\sin{2x - \frac{pi}{4}} + 2\cos{5x} + 3\cos{20x} + 4\sin{110x} + 0.2\cos{50*x}$ sampled with a frequency of 300:
+Graph below shows analysis done for $y(x) = 2\sin{2x - \frac{pi}{4}} + 2\cos{5x} + 3\cos{20x} + 4\sin{110x} + 0.2\cos{50x}$ sampled with a frequency of 300:
 <p align="center"><img src="plots/plot.png" width="500" class="center"/></p>
 
