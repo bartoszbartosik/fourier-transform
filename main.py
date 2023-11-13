@@ -1,4 +1,5 @@
-import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib import pyplot as plt
 import numpy as np
 from numpy import sin, cos, pi
 
@@ -73,8 +74,8 @@ def ift(dft: dict):
 # Define a function to be analysed
 def function(x):
     # return sin(2*x) + 2*cos(5*x) + cos(20*x + 1.71) + sin(110*x -1.71) + 1.5*cos(50*x)
-    # return 2*sin(2*x - pi/4) + 2*cos(5*x) + 3*cos(20*x) + 4*sin(110*x) + 0.2*cos(50*x)
-    return 2*sin(50*x - pi/4)
+    return 2*sin(2*x - pi/4) + 2*cos(5*x) + 3*cos(20*x) + 4*sin(110*x) + 0.2*cos(50*x)
+    # return 2*sin(50*x - pi/4)
     # return sin(100*x + pi/4)
 
 
@@ -83,10 +84,10 @@ def main():
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # # # #   S E T   U P   # # # # # # # # # # # # # # # # # # # # # # # # #
     # Sampling frequency (number of samples per unit)
-    f_s = 500
+    f_s = 300
 
     # Function interval
-    x_end = pi/4
+    x_end = pi/8
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -132,7 +133,7 @@ def main():
         'x_labels': ['x', 'f', 'f', 'f', 'f', 'x'],
         'y_labels': ['y(x)', 'A(f)', '\u03C6(f)', 'Re(f)', 'Im(f)', 'y\'(x)']
     }
-
+    matplotlib.rcParams['figure.figsize'] = 15, 20
     for i in range(len(plot_data['xs'])):
         plt.subplot(plot_data['subplots'][i])
         if plot_data['plot_types'][i].__name__ == 'scatter':
@@ -151,7 +152,9 @@ def main():
         plt.ylabel(plot_data['y_labels'][i])
         plt.grid()
 
-    plt.show()
+    # plt.tight_layout()
+    plt.savefig('plots/plot.png')
+    # plt.show()
 
 
 if __name__ == '__main__':
